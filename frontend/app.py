@@ -64,6 +64,12 @@ def delete_current_document():
         st.error("No document to delete.")
     return False
 
+def clear_chat():
+    if "messages" in st.session_state:
+        del st.session_state.messages
+    st.success("Chat cleared successfully!")
+
+
 def main():
     st.set_page_config(layout="wide")
     
@@ -81,13 +87,18 @@ def main():
 
     # Create a container for the chat interface header and manage document button
     header_container = st.container()
-    col1, col2 = header_container.columns([3, 1])
+    col1, col2, col3 = header_container.columns([3, 1, 1])
 
     with col1:
         st.header("Chat Interface")
 
     with col2:
-        if st.button("📁 Manage Document", key="manage_doc_button", use_container_width=True):
+         if st.button("🗑️ Clear Chat", key="clear_chat_button", use_container_width=True):
+            clear_chat()
+            st.experimental_rerun()
+
+    with col3:
+        if st.button("📁 Upload PDF", key="manage_doc_button", use_container_width=True):
             modal = Modal(key="document_modal", title="Manage Document")
             with modal.container():
                 if document_exists:
@@ -108,6 +119,8 @@ def main():
                                 st.experimental_rerun()
                 
                 st.button("Close")
+       
+
 
     # Chat interface
     if document_exists:
@@ -135,10 +148,13 @@ def main():
                 unsafe_allow_html=True
             )
 
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
+        else:
+            # Display chat messages
+            for message in st.session_state.messages:
+                with chat_container.chat_message(message["role"]):
+                    st.markdown(message["content"])
 
+        # Chat input
         if prompt := st.chat_input("What would you like to know about the document?"):
             st.session_state.messages.append({"role": "user", "content": prompt})
             with st.chat_message("user"):
