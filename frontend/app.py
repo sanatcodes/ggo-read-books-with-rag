@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import json
 import os
+from streamlit_modal import Modal
 
 API_ENDPOINT = "http://localhost:8000"  # Adjust this to your backend URL
 DOCUMENT_INFO_FILE = "document_info.json"
@@ -47,7 +48,8 @@ def check_document_exists():
 def delete_current_document():
     document_id = load_document_info()
     if document_id:
-        response = requests.delete(f"{API_ENDPOINT}/api/delete_document", params={"document_id": document_id})
+        payload = {"document_id": document_id}
+        response = requests.delete(f"{API_ENDPOINT}/api/delete_document", json=payload)
         if response.status_code == 200:
             os.remove(DOCUMENT_INFO_FILE)
             st.success("Document deleted successfully!")
@@ -55,10 +57,12 @@ def delete_current_document():
                 del st.session_state.document_id
             if "messages" in st.session_state:
                 del st.session_state.messages
+            return True
         else:
             st.error(f"Error deleting document: {response.text}")
     else:
         st.error("No document to delete.")
+    return False
 
 def main():
     st.set_page_config(layout="wide")
@@ -75,48 +79,58 @@ def main():
 
     document_exists = check_document_exists()
 
-    if not document_exists:
-        st.warning("No document uploaded. Please upload a document to start.")
-        uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
-        if uploaded_file is not None:
-            if st.button("Upload Document"):
-                with st.spinner("Uploading and processing..."):
-                    document_id = upload_document(uploaded_file)
-                    if document_id:
-                        st.session_state.document_id = document_id
-                        st.success("Document uploaded successfully!")
-                        st.experimental_rerun()
+    # Create a container for the chat interface header and manage document button
+    header_container = st.container()
+    col1, col2 = header_container.columns([3, 1])
+
+    with col1:
+        st.header("Chat Interface")
+
+    with col2:
+        if st.button("📁 Manage Document", key="manage_doc_button", use_container_width=True):
+            modal = Modal(key="document_modal", title="Manage Document")
+            with modal.container():
+                if document_exists:
+                    st.warning("A document is already loaded. Uploading a new document will replace the current one.")
+                    if st.button("Delete Current Document"):
+                        if delete_current_document():
+                            st.success("Document deleted. You can now upload a new one.")
+                            st.experimental_rerun()
+                
+                uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
+                if uploaded_file is not None:
+                    if st.button("Upload Document"):
+                        with st.spinner("Uploading and processing..."):
+                            document_id = upload_document(uploaded_file)
+                            if document_id:
+                                st.session_state.document_id = document_id
+                                st.success("Document uploaded successfully!")
+                                st.experimental_rerun()
+                
+                st.button("Close")
+
+    # Chat interface
+    if document_exists:
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
+
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+
+        if prompt := st.chat_input("What would you like to know about the document?"):
+            st.session_state.messages.append({"role": "user", "content": prompt})
+            with st.chat_message("user"):
+                st.markdown(prompt)
+
+            with st.chat_message("assistant"):
+                with st.spinner("Analyzing document and generating response..."):
+                    document_id = load_document_info()
+                    response = get_answer(prompt, document_id)
+                    st.markdown(response)
+            st.session_state.messages.append({"role": "assistant", "content": response})
     else:
-        col1, col2 = st.columns([3, 1])
-        
-
-        with col2:
-            st.header("Document Management")
-            st.success("Document loaded and ready for querying!")
-            if st.button("Upload New Document"):
-                if st.button("Confirm Delete and Upload"):
-                    delete_current_document()
-                    st.experimental_rerun()
-        with col1:
-            st.header("Chat Interface")
-            if "messages" not in st.session_state:
-                st.session_state.messages = []
-
-            for message in st.session_state.messages:
-                with st.chat_message(message["role"]):
-                    st.markdown(message["content"])
-
-            if prompt := st.chat_input("What would you like to know about the document?"):
-                st.session_state.messages.append({"role": "user", "content": prompt})
-                with st.chat_message("user"):
-                    st.markdown(prompt)
-
-                with st.chat_message("assistant"):
-                    with st.spinner("Analyzing document and generating response..."):
-                        document_id = load_document_info()
-                        response = get_answer(prompt, document_id)
-                        st.markdown(response)
-                st.session_state.messages.append({"role": "assistant", "content": response})
+        st.info("Please upload a document to start chatting.")
 
 if __name__ == "__main__":
     main()
