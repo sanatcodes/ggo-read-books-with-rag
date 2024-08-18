@@ -58,3 +58,32 @@ def fetch_top_paragraphs(document_id: str, embedding: list[float]) -> list[str]:
     
     answers = [match.metadata['text'] for match in query_response['matches']]
     return answers
+
+def document_exists(document_id: str) -> bool:
+    try:
+        # Fetch a single vector with the given document_id
+        response = index.fetch(ids=[f"{document_id}_0"])
+        
+        # If the response contains any vectors, the document exists
+        return len(response['vectors']) > 0
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Error checking document existence: {str(e)}')
+
+def delete_document_from_db(document_id: str):
+    try:
+        # First, we need to fetch all vector IDs associated with this document
+        response = index.query(
+            vector=[0] * 1024,  # Dummy vector, we're only interested in the metadata
+            filter={"document_id": {"$eq": document_id}},
+            top_k=10000,  # Adjust this based on your maximum expected paragraphs per document
+            include_metadata=False
+        )
+        
+        # Extract the IDs
+        vector_ids = [match['id'] for match in response['matches']]
+        
+        # Delete all vectors associated with this document
+        if vector_ids:
+            index.delete(ids=vector_ids)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Error deleting document: {str(e)}')

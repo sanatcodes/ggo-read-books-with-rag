@@ -49,13 +49,10 @@ def main():
     3. Get AI-generated answers based on the document
     """)
 
-    # col1, col2 = st.columns([1, 3])
-
-
     st.header("Document Management")
     if not check_document_exists():
         st.warning("No document uploaded. Please upload a document to start.")
-        uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
+        uploaded_file = st.file_uploader("Choose sa PDF file", type="pdf")
         if uploaded_file is not None:
             if st.button("Upload Document"):
                 with st.spinner("Uploading and processing..."):

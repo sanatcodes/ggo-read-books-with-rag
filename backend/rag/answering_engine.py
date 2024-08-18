@@ -3,7 +3,7 @@ from nltk.tokenize import sent_tokenize
 from .file_helper import read_document_from_file
 import uuid
 from .llm import fetch_embeddings, synthesize_answer
-from .vectordb import add_document_to_db, fetch_top_paragraphs
+from .vectordb import add_document_to_db, fetch_top_paragraphs, delete_document_from_db, document_exists
 from fastapi import HTTPException
 
 # Split document into paragraph of roughly of max_char size
@@ -41,3 +41,11 @@ def get_answer(question: str, document_id: str):
     if len(relevant_paragraphs) == 0:
         raise HTTPException(404, detail='Embedding are not ready yet for this document')
     return synthesize_answer(question, relevant_paragraphs)
+
+def check_document_exists(document_id: str) -> bool:
+    return document_exists(document_id)
+
+def delete_document(document_id: str):
+    if not document_exists(document_id):
+        raise HTTPException(status_code=404, detail='Document not found')
+    delete_document_from_db(document_id)

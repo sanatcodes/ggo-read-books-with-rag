@@ -1,7 +1,7 @@
 # backend/main.py
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, HTTPException
 from pydantic import BaseModel
-from backend.rag.answering_engine import add_document, get_answer
+from backend.rag.answering_engine import add_document, get_answer, check_document_exists, delete_document
 from fastapi.middleware.cors import CORSMiddleware
 import tempfile
 import nltk
@@ -14,6 +14,9 @@ load_dotenv()  # take environment variables from .env.
 class QuestionModel(BaseModel):
     document_id: str
     question: str
+
+class DocumentModel(BaseModel):
+    document_id: str
 
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json")
 
@@ -42,3 +45,21 @@ async def upload_document(file: UploadFile):
 @app.get('/api/test')
 async def test():
     return {'response': 'This test fail succesfully'}
+
+@app.get('/api/check_document')
+async def check_document(document_id: str):
+    try:
+        exists = check_document_exists(document_id)
+        return {'exists': exists}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete('/api/delete_document')
+async def remove_document(req: DocumentModel):
+    try:
+        delete_document(req.document_id)
+        return {'message': 'Document deleted successfully'}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
