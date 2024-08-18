@@ -114,6 +114,27 @@ def main():
         if "messages" not in st.session_state:
             st.session_state.messages = []
 
+        chat_container = st.container()
+
+        if not st.session_state.messages:
+              chat_container.markdown(
+                """
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 30vh;
+                    font-size: 5em;
+                    color: gray;
+                    font-family: 'IBM Plex Serif', serif;
+                    opacity:20%;
+                ">
+                    Give(a)Go
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
         for message in st.session_state.messages:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
