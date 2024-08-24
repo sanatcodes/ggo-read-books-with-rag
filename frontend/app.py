@@ -73,11 +73,9 @@ def clear_chat():
 def main():
     st.set_page_config(layout="wide")
     
-    st.title("RAG Chat App")
-    st.subheader("Explore Retrieval-Augmented Generation (RAG) with your documents")
+    st.title("Read with RAG")
     
     st.markdown("""
-    This app demonstrates the power of RAG:
     1. Upload a document to create a knowledge base
     2. Ask questions about the content
     3. Get AI-generated answers based on the document
@@ -136,7 +134,7 @@ def main():
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    height: 30vh;
+                    height: 50vh;
                     font-size: 5em;
                     color: gray;
                     font-family: 'IBM Plex Serif', serif;
