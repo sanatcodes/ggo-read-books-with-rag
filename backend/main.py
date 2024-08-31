@@ -20,7 +20,7 @@ class DocumentModel(BaseModel):
 
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json")
 
-origins = [os.environ.get('CLIENT_URL', 'http://localhost:3000')]
+origins = [os.getenv('CLIENT_URL', 'http://localhost:3000')]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -29,6 +29,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# download tokenizer modules
 nltk.download('punkt')
 
 @app.post('/api/answer_question')

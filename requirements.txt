@@ -8,3 +8,5 @@ nltk
 python-multipart
 cohere
 python-dotenv
+streamlit
+streamlit-modal

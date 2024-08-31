@@ -93,7 +93,6 @@ def main():
     with col2:
          if st.button("🗑️ Clear Chat", key="clear_chat_button", use_container_width=True):
             clear_chat()
-            st.experimental_rerun()
 
     with col3:
         if st.button("📁 Upload PDF", key="manage_doc_button", use_container_width=True):
@@ -104,7 +103,6 @@ def main():
                     if st.button("Delete Current Document"):
                         if delete_current_document():
                             st.success("Document deleted. You can now upload a new one.")
-                            st.experimental_rerun()
                 
                 uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
                 if uploaded_file is not None:
@@ -114,7 +112,6 @@ def main():
                             if document_id:
                                 st.session_state.document_id = document_id
                                 st.success("Document uploaded successfully!")
-                                st.experimental_rerun()
                 
                 st.button("Close")
        

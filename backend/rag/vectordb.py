@@ -3,7 +3,7 @@ from pinecone import Pinecone, ServerlessSpec
 from fastapi import HTTPException
 import os
 
-PINECONE_API_KEY = os.environ.get('PINECONE_API_KEY')
+PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
 TOP_K_DOCUMENTS = 3
 INDEX_NAME = 'document-indexer'
 

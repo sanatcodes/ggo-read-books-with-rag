@@ -5,7 +5,7 @@ import cohere
 import os
 
 client = OpenAI()
-co = cohere.Client(api_key=os.environ.get('COHERE_API_KEY'))
+co = cohere.Client(api_key=os.getenv('COHERE_API_KEY'))
 
 COHERE_EMBEDDING_MODEL = 'embed-english-v3.0'
 
