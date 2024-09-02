@@ -43,15 +43,18 @@ pip install -r requirements.txt
 3. Set up environment variables:
 Create a `.env` file in the root directory and add the following:
 
-OPENAI_API_KEY=your_openai_api_key
 PINECONE_API_KEY=your_pinecone_api_key
 PINECONE_ENV=your_pinecone_environment
-CopyReplace the placeholder values with your actual API keys.
+
+_Replace the placeholder values with your actual API keys._
 
 ### Running the App
 
 1. Start the backend server:
+   
+```
 python -m uvicorn backend.main:app --reload
+```
 
 
 The backend will be available at `http://localhost:8000`.
