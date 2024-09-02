@@ -1,10 +1,10 @@
 # backend/rag/llm.py
-from openai import OpenAI
 from fastapi import HTTPException
 import cohere
 import os
+import json
+import requests
 
-client = OpenAI()
 co = cohere.Client(api_key=os.getenv('COHERE_API_KEY'))
 
 COHERE_EMBEDDING_MODEL = 'embed-english-v3.0'
@@ -19,7 +19,7 @@ def fetch_embeddings(texts: list[str], embedding_type: str = 'search_document') 
         return results
     except Exception as e:
         print(e)
-        raise HTTPException(404, detail= f'OpenAI embedding fetch fail with error {e}')
+        raise HTTPException(404, detail= f'Cohere embedding fetch fail with error {e}')
 
 def question_and_answer_prompt(question: str, context: list[str]) -> str:
     context_str = '\n'.join(context)
@@ -34,13 +34,25 @@ def question_and_answer_prompt(question: str, context: list[str]) -> str:
     """
 
 def synthesize_answer(question: str, context: list[str]) -> str:
-    response = client.chat.completions.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": question_and_answer_prompt(question, context)}
-        ],
-        temperature=0
-    )
-    answer = response.choices[0].message.content
-    print(f"Price: {response.usage.total_tokens * 0.003 / 1000} $")
-    return answer
+    payload = {
+        "messages": [
+            {
+                "role": "assistant",
+                "content": "act as an expert question answering system"
+            },
+            {
+                "role": "user",
+                "content": question_and_answer_prompt(question, context)
+            }
+        ]
+    }
+    
+    try:
+        response = requests.post(
+            "https://giveago-rag.netlify.app/api/llama",
+            json=payload
+        )
+
+        return response.content
+    except requests.exceptions.RequestException as e:
+        return f"Error: {str(e)}"
