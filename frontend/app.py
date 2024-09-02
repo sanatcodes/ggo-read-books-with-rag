@@ -1,11 +1,18 @@
 import streamlit as st
 import requests
 import json
+import logging
 import os
 from streamlit_modal import Modal
 
+logging.basicConfig(level=logging.INFO)
+
 API_ENDPOINT = "http://localhost:8000"  # Adjust this to your backend URL
 DOCUMENT_INFO_FILE = "document_info.json"
+
+if "modal_open" not in st.session_state:
+    st.session_state.modal_open = False
+
 
 def save_document_info(document_id):
     with open(DOCUMENT_INFO_FILE, "w") as f:
@@ -20,6 +27,7 @@ def load_document_info():
 def upload_document(file):
     files = {"file": file}
     response = requests.post(f"{API_ENDPOINT}/api/upload_document", files=files)
+    logging.info(f"Upload document response: {response.json()}")
     if response.status_code == 200:
         document_id = response.json()["document_id"]
         save_document_info(document_id)
@@ -67,8 +75,8 @@ def delete_current_document():
 def clear_chat():
     if "messages" in st.session_state:
         del st.session_state.messages
+    logging.info("Chat cleared successfully!")
     st.success("Chat cleared successfully!")
-
 
 def main():
     st.set_page_config(layout="wide")
@@ -96,6 +104,9 @@ def main():
 
     with col3:
         if st.button("📁 Upload PDF", key="manage_doc_button", use_container_width=True):
+            st.session_state.modal_open = True
+            
+        if st.session_state.modal_open:
             modal = Modal(key="document_modal", title="Manage Document")
             with modal.container():
                 if document_exists:
@@ -113,9 +124,9 @@ def main():
                                 st.session_state.document_id = document_id
                                 st.success("Document uploaded successfully!")
                 
-                st.button("Close")
-       
-
+                # Add a button to close the modal
+                if st.button("Close"):
+                    st.session_state.modal_open = False  # Set the modal to close
 
     # Chat interface
     if document_exists:

@@ -35,7 +35,7 @@ def question_and_answer_prompt(question: str, context: list[str]) -> str:
 
 def synthesize_answer(question: str, context: list[str]) -> str:
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4",
         messages=[
             {"role": "system", "content": question_and_answer_prompt(question, context)}
         ],
