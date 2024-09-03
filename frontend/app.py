@@ -137,6 +137,7 @@ def main():
                             st.success(
                                 "Document deleted. You can now upload a new one."
                             )
+                            document_exists = False 
 
                 uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
                 if uploaded_file is not None:
