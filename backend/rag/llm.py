@@ -5,24 +5,26 @@ import os
 import json
 import requests
 
-co = cohere.Client(api_key=os.getenv('COHERE_API_KEY'))
+co = cohere.Client(api_key="Tw5RIwVGP4Tl70b1O183FSJ1Ki1rJBwnzThg4mpi")
 
-COHERE_EMBEDDING_MODEL = 'embed-english-v3.0'
+COHERE_EMBEDDING_MODEL = "embed-english-v3.0"
 
-def fetch_embeddings(texts: list[str], embedding_type: str = 'search_document') -> list[list[float]]:
+
+def fetch_embeddings(
+    texts: list[str], embedding_type: str = "search_document"
+) -> list[list[float]]:
     try:
-        results =  co.embed(
-            texts=texts,
-            model=COHERE_EMBEDDING_MODEL,
-            input_type=embedding_type
+        results = co.embed(
+            texts=texts, model=COHERE_EMBEDDING_MODEL, input_type=embedding_type
         ).embeddings
         return results
     except Exception as e:
         print(e)
-        raise HTTPException(404, detail= f'Cohere embedding fetch fail with error {e}')
+        raise HTTPException(404, detail=f"Cohere embedding fetch fail with error {e}")
+
 
 def question_and_answer_prompt(question: str, context: list[str]) -> str:
-    context_str = '\n'.join(context)
+    context_str = "\n".join(context)
     return f"""
     Context information is below.
     ---------------------
@@ -33,24 +35,21 @@ def question_and_answer_prompt(question: str, context: list[str]) -> str:
     Answer: 
     """
 
+
 def synthesize_answer(question: str, context: list[str]) -> str:
     payload = {
         "messages": [
             {
                 "role": "assistant",
-                "content": "act as an expert question answering system"
+                "content": "act as an expert question answering system",
             },
-            {
-                "role": "user",
-                "content": question_and_answer_prompt(question, context)
-            }
+            {"role": "user", "content": question_and_answer_prompt(question, context)},
         ]
     }
-    
+
     try:
         response = requests.post(
-            "https://giveago-rag.netlify.app/api/llama",
-            json=payload
+            "https://giveago-rag.netlify.app/api/llama", json=payload
         )
 
         return response.content
