@@ -43,8 +43,11 @@ pip install -r requirements.txt
 3. Set up environment variables:
 Create a `.env` file in the root directory and add the following:
 
+Get Pinecone API key [here]( https://www.pinecone.io/ )
+Get Cohere API key [here](https://cohere.com/)
+
 PINECONE_API_KEY=your_pinecone_api_key
-PINECONE_ENV=your_pinecone_environment
+COHERE_API_KEY=your_cohere_api_key
 
 _Replace the placeholder values with your actual API keys._
 
@@ -79,7 +82,7 @@ The frontend will open in your default web browser.
 - Backend: FastAPI
 - Frontend: Streamlit
 - Vector Database: Pinecone
-- Language Model: OpenAI's GPT model (via API)
+- Language Model: Llama 3.1 8B through out API endpoint
 - Embedding Model: Sentence transformers
 
 ## Limitations
