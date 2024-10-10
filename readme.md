@@ -1,107 +1,72 @@
-# PDF Question Answering App
+# 📚✨ Making Generative Books with RAG: Chat with Your Documents! 🤖💬
 
-## Project Background
+## Project Overview 📄
 
-This project is a Question Answering (QA) system that allows users to upload PDF documents and ask questions about their content. It leverages advanced Natural Language Processing (NLP) techniques and Large Language Models (LLMs) to provide accurate answers based on the document's content.
+Welcome to **Making Generative Books with RAG**—an app that lets you talk to your books! Upload a PDF, ask questions, and get answers directly from its content. It's like having a conversation with your favorite author! 📖💬
 
-The system uses a technique called Retrieval-Augmented Generation (RAG), which combines the power of retrieval-based and generative AI methods. Here's how it works:
+This app uses **Retrieval-Augmented Generation (RAG)**, a smart blend of retrieval and generative AI. Here's the magic:
 
-1. **Document Processing**: When a PDF is uploaded, the system extracts the text and splits it into manageable chunks.
+1. **Upload a PDF** and the system breaks it into text chunks. 🧩
+2. **Embedding Generation**: Transforms text into high-dimensional vectors (embeddings). 📊
+3. **Vector Database**: Stores these embeddings in **Pinecone** for quick retrieval. 🗄️
+4. **Ask Questions**: The system finds relevant text chunks and uses a **Large Language Model (LLM)** to generate answers. 🎯
 
-2. **Embedding Generation**: Each chunk is converted into a high-dimensional vector (embedding) that captures its semantic meaning.
+---
 
-3. **Vector Database**: These embeddings are stored in a vector database (Pinecone) for efficient retrieval.
+## Getting Started 🚀
 
-4. **Question Answering**: When a user asks a question, the system:
-   - Converts the question into an embedding
-   - Retrieves the most relevant document chunks from the vector database
-   - Uses a Large Language Model to generate an answer based on the retrieved chunks and the question
+### Prerequisites 🧰
 
-This approach allows the system to provide context-aware answers that are grounded in the actual content of the uploaded document, reducing hallucinations and improving accuracy.
+- Python 3.7+ 🐍
+- pip 📦
 
-## Getting Started
+### Installation 🛠️
 
-### Prerequisites
+1. **Clone the repo**:
+   ```bash
+   git clone https://github.com/sanatcodes/ggo-read-books-with-rag
+   ```
 
-- Python 3.7 or higher
-- pip (Python package manager)
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### Installation
+3. **Set up environment variables**: Create a .env file:
+   ```
+   PINECONE_API_KEY=your_pinecone_api_key
+   COHERE_API_KEY=your_cohere_api_key
+   ```
 
-1. Clone the repository:
+## Running the App 🏃‍♂️
 
-```
-git clone https://github.com/sanatcodes/ggo-read-books-with-rag
+1. **Start the backend**:
+   ```bash
+   python -m uvicorn backend.main:app --reload
+   ```
 
-```
+2. **Start the frontend**:
+   ```bash
+   streamlit run app.py
+   ```
 
-2. Install the required packages:
-```
-pip install -r requirements.txt
-```
+Upload your PDF, ask questions, and get instant answers! 🌟
 
-3. Set up environment variables:
-Create a `.env` file in the root directory and add the following:
+## Tech Stack 🛠️
 
-Get Pinecone API key [here]( https://www.pinecone.io/ )
-Get Cohere API key [here](https://cohere.com/)
+- **Backend**: FastAPI 🚀
+- **Frontend**: Streamlit 🎨
+- **Vector Database**: Pinecone 🗂️
+- **Language Model**: Llama 3.1 8B 🦙
 
-PINECONE_API_KEY=your_pinecone_api_key
-COHERE_API_KEY=your_cohere_api_key
+## Limitations & Future Improvements 🌱
 
-_Replace the placeholder values with your actual API keys._
+- Best with text-based PDFs. 🖼️
+- Processing time may vary with document size. ⏲️
+- Upcoming: Support for DOCX files, improved chunking, and more model options!
 
-### Running the App
+## License 📜
 
-1. Start the backend server:
-   
-```
-python -m uvicorn backend.main:app --reload
-```
+This project is licensed under the MIT License. See the LICENSE file for details.
 
-
-The backend will be available at `http://localhost:8000`.
-
-2. In a new terminal, start the frontend:
-```
-streamlit run app.py
-```
-
-The frontend will open in your default web browser.
-
-## Using the App
-
-1. Upload a PDF document using the file uploader.
-2. Wait for the document to be processed (this may take a few moments depending on the size of the document).
-3. Once processing is complete, you can start asking questions about the document in the text input field.
-4. The system will provide answers based on the content of the uploaded document.
-5. You can upload a new document or clear the chat history at any time using the provided buttons.
-
-## Technical Details
-
-- Backend: FastAPI
-- Frontend: Streamlit
-- Vector Database: Pinecone
-- Language Model: Llama 3.1 8B through out API endpoint
-- Embedding Model: Sentence transformers
-
-## Limitations
-
-- The system is designed for text-based PDFs. It may not work well with scanned documents or PDFs with complex layouts.
-- The quality of answers depends on the content of the uploaded document and the phrasing of the questions.
-- There may be a processing delay for very large documents.
-
-## Future Improvements
-
-- Support for multiple document types (e.g., DOCX, TXT)
-- Improved document chunking strategies
-- Integration with multiple language models for comparison
-- User authentication and document management features
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+Ready to explore the future of interactive reading? Let's dive into **Making Generative Books with RAG**! 📚✨
