@@ -3,6 +3,9 @@
 ## Project Overview 📄
 
 Welcome to **Making Generative Books with RAG**—an app that lets you talk to your books! Upload a PDF, ask questions, and get answers directly from its content. It's like having a conversation with your favorite author! 📖💬
+![RAG bot UI](https://github.com/user-attachments/assets/319d8301-3859-42c6-968a-08b9612c1e25)
+
+
 
 This app uses **Retrieval-Augmented Generation (RAG)**, a smart blend of retrieval and generative AI. Here's the magic:
 
